@@ -2,7 +2,7 @@
 
 :root {
   font-family: Comfortaa, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
+  line-height: 1.6;
   font-weight: 400;
 
   color-scheme: light dark;
@@ -46,6 +46,15 @@ h1 {
   cursor: pointer;
   transition: border-color 0.25s;
   min-width: 14ch;
+  line-height: inherit;
+}
+
+input {
+  line-height: inherit;
+}
+
+input[type=time] {
+  padding-top: 0.25rem;
 }
 
 .btn:hover {
