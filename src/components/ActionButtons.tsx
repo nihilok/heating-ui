@@ -73,8 +73,6 @@ export function ActionButtons({ currentSystem, refreshSystems }: Props) {
     });
   }
 
-  console.log(currentSystem);
-
   return (
     <div className="action-buttons">
       <button

@@ -68,7 +68,6 @@ export function Display(props: { currentSystemId: string | null }) {
       getTarget()
         .then((data) => {
           if (isActive) {
-            console.log(data);
             saveTarget(data.current_target);
             saveRelay(data.relay_on);
             setTarget(data.current_target);
