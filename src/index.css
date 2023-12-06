@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;500;600;700&display=swap');
 
 :root {
   font-family: Comfortaa, system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -14,11 +14,13 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+  --text-muted: #696969;
+  --text-primary: #646cff;
 }
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: var(--text-primary);
   text-decoration: inherit;
 }
 
@@ -45,7 +47,7 @@ h1 {
   background-color: #1a1a1a;
   cursor: pointer;
   transition: border-color 0.25s;
-  min-width: 14ch;
+  min-width: 10rem;
   line-height: inherit;
 }
 
@@ -66,6 +68,16 @@ input[type=time] {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+.btn:disabled {
+  cursor: not-allowed;
+  color: var(--text-muted);
+}
+
+.btn:disabled:hover {
+  border-color: transparent;
+}
+
+
 input {
   font-family: inherit;
 }
@@ -81,6 +93,7 @@ input {
   }
 
   .btn {
+    --text-muted: #A4A4A4;
     background-color: #f9f9f9;
     color: #213547;
   }
@@ -354,10 +367,6 @@ input {
 
 .flash-in {
   animation: flashIn 1s forwards;
-}
-
-button:disabled {
-  cursor: not-allowed;
 }
 
 .app-container {

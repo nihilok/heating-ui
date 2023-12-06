@@ -146,7 +146,7 @@ export const PeriodsContainer: React.FC<PeriodsContainerProps> = ({
       updatePeriods();
       toast("Program updated", {
         type: "success",
-        autoClose: 1000,
+        autoClose: 1250,
         hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: true,

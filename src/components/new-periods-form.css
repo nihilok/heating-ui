@@ -90,11 +90,9 @@
 }
 
 .system-select-button.selected-system {
-  border-color: dimgrey;
-}
-
-.system-select-button:not(.selected-system) {
-  color: dimgrey
+  border-color: var(--text-muted);
+  color: var(--text-primary);
+  font-weight: 700;
 }
 
 .action-buttons {
