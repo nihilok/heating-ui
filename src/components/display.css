@@ -1,0 +1,13 @@
+.app-container g.doughnut {
+  margin-left: 10px;
+}
+
+.fixed-width {
+  width: 20rem;
+}
+
+.loading-spinner-absolute {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+}

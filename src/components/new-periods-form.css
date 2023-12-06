@@ -1,0 +1,104 @@
+.periods-container {
+  margin: 2rem auto 0;
+}
+
+.new-period-button {
+  display: flex;
+  justify-content: center;
+}
+
+.period-form {
+  position: relative;
+  padding: 0.25rem 0.5rem;
+}
+
+.dotw-checkbox {
+  position: absolute;
+  left: -999vw;
+}
+
+.form-input {
+  --font-size: 2.5rem;
+  max-width: 6ch;
+  font-size: var(--font-size);
+}
+
+.form-label {
+  --font-size: 1.25rem;
+  font-size: var(--font-size);
+  display: block;
+}
+
+.dotw-label {
+  --font-size: 1.25rem;
+  background-color: #213547;
+  height: 2em;
+  width: 2em;
+  display: block;
+  border-radius: 50%;
+  position: relative;
+  cursor: pointer;
+  font-size: var(--font-size);
+}
+
+.dotw-label:after {
+  font-size: inherit;
+  position: absolute;
+  content: attr(data-display-text);
+  text-align: center;
+  max-width: 2ch;
+  max-height: 1.5em;
+  word-wrap: break-word;
+  overflow: hidden;
+  top: 0.25em;
+  left: 50%;
+  transform: translateX(-52%);
+}
+
+.dotw-label:focus-within {
+  box-shadow: 0 0 5px #eee;
+}
+
+.is-checked {
+  background-color: #646cff;
+}
+
+.dotw-label:not(.is-checked):after {
+  color: grey;
+}
+
+.time-range-group {
+  display: flex
+}
+
+.close-icon {
+  all: unset;
+  position: absolute;
+  right: 0.5rem;
+  top: 0.25rem;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.close-icon:hover {
+  text-shadow: 0 0 2px #eee;
+}
+
+.system-select-button + .system-select-button {
+  margin-left: 1rem;
+}
+
+.system-select-button.selected-system {
+  border-color: dimgrey;
+}
+
+.system-select-button:not(.selected-system) {
+  color: dimgrey
+}
+
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
