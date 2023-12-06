@@ -95,6 +95,11 @@ export function PeriodForm(props: Props) {
     }
   }, [shouldUpdate, submit]);
 
+  function onUpdateTemperature(value: string) {
+    setTemperature(parseInt(value));
+    setShouldUpdate(true);
+  }
+
   return (
     <form
       onSubmit={handleSubmit}
@@ -249,10 +254,10 @@ export function PeriodForm(props: Props) {
           step={1}
           onChange={(e) => setTempTemperature(parseInt(e.target.value))}
           onMouseUp={(e) => {
-            setTemperature(parseInt(e.currentTarget.value));
+            onUpdateTemperature(e.currentTarget.value);
           }}
           onTouchEnd={(e) => {
-            setTemperature(parseInt(e.currentTarget.value));
+            onUpdateTemperature(e.currentTarget.value);
           }}
         />
         <div style={{ width: "4ch", textAlign: "right" }} onBlur={onBlur}>
