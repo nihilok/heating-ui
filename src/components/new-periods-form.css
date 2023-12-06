@@ -53,6 +53,7 @@
   top: 0.25em;
   left: 50%;
   transform: translateX(-52%);
+  color: white;
 }
 
 .dotw-label:focus-within {
