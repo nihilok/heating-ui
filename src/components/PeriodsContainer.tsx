@@ -112,22 +112,22 @@ export const PeriodsContainer: React.FC<PeriodsContainerProps> = ({
 
   const previousPeriods = usePrevious(periods);
 
+  const [updateLock, setUpdateLock] = React.useState<boolean>(false);
+
   const updatePeriod = React.useCallback(
     (id: string, period: Period) => {
       const newPeriods: Period[] = [...periods];
       const periodIds = periods.map((p) => p.id);
       const newIdx = periodIds.indexOf(id);
       const newPeriod = newPeriods[newIdx];
-      if (!arePeriodsEqual(newPeriod, period)) {
+      if (!arePeriodsEqual(newPeriod, period) && !updateLock) {
         newPeriods[newIdx] = period;
         setPeriods(newPeriods.sort(sortPeriods));
         setHasChanged(true);
       }
     },
-    [periods]
+    [periods, updateLock]
   );
-
-  const [updateLock, setUpdateLock] = React.useState<boolean>(false);
 
   useEffect(() => {
     setUpdateLock(true);

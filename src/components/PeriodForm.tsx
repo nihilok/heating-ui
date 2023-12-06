@@ -56,8 +56,10 @@ export function PeriodForm(props: Props) {
       },
     }),
     [
+      props.id,
       start,
       end,
+      temperature,
       monday,
       tuesday,
       wednesday,
@@ -65,7 +67,6 @@ export function PeriodForm(props: Props) {
       friday,
       saturday,
       sunday,
-      temperature,
     ]
   );
 
@@ -78,25 +79,21 @@ export function PeriodForm(props: Props) {
     submit();
   };
 
-  function submit() {
+  const submit = React.useCallback(() => {
     props.onSubmit(newPeriod);
-  }
-
-  useEffect(() => {
-    submit();
-  }, [
-    monday,
-    tuesday,
-    wednesday,
-    thursday,
-    friday,
-    saturday,
-    sunday,
-    temperature,
-  ]);
+  }, [props, newPeriod]);
 
   const [tempTemperature, setTempTemperature] =
     React.useState<number>(temperature);
+
+  const [shouldUpdate, setShouldUpdate] = React.useState<boolean>(false);
+
+  useEffect(() => {
+    if (shouldUpdate) {
+      submit();
+      setShouldUpdate(false);
+    }
+  }, [shouldUpdate, submit]);
 
   return (
     <form
@@ -147,6 +144,7 @@ export function PeriodForm(props: Props) {
             checked={monday}
             onChange={(e) => {
               setMonday(e.target.checked);
+              setShouldUpdate(true);
             }}
           />
         </label>
@@ -161,6 +159,7 @@ export function PeriodForm(props: Props) {
             checked={tuesday}
             onChange={(e) => {
               setTuesday(e.target.checked);
+              setShouldUpdate(true);
             }}
           />
         </label>
@@ -175,6 +174,7 @@ export function PeriodForm(props: Props) {
             checked={wednesday}
             onChange={(e) => {
               setWednesday(e.target.checked);
+              setShouldUpdate(true);
             }}
           />
         </label>
@@ -189,6 +189,7 @@ export function PeriodForm(props: Props) {
             checked={thursday}
             onChange={(e) => {
               setThursday(e.target.checked);
+              setShouldUpdate(true);
             }}
           />
         </label>
@@ -203,6 +204,7 @@ export function PeriodForm(props: Props) {
             checked={friday}
             onChange={(e) => {
               setFriday(e.target.checked);
+              setShouldUpdate(true);
             }}
           />
         </label>
@@ -217,6 +219,7 @@ export function PeriodForm(props: Props) {
             checked={saturday}
             onChange={(e) => {
               setSaturday(e.target.checked);
+              setShouldUpdate(true);
             }}
           />
         </label>
@@ -231,6 +234,7 @@ export function PeriodForm(props: Props) {
             checked={sunday}
             onChange={(e) => {
               setSunday(e.target.checked);
+              setShouldUpdate(true);
             }}
           />
         </label>
