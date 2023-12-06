@@ -98,7 +98,11 @@ export function LoginPage() {
             name="confirm"
           />
         )}
-        <input type="submit" value={isSignUp ? "Submit" : "Login"} />
+        <input
+          type="submit"
+          value={isSignUp ? "Submit" : "Login"}
+          className="btn"
+        />
         {/*{passwordMismatch && <p className="error">Passwords do not match</p>}*/}
       </form>
       {ENABLE_REGISTRATIONS && (

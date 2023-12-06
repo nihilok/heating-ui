@@ -20,7 +20,7 @@ export function SystemSelect(props: {
       {props.systems.map((s) => (
         <button
           key={s.system_id}
-          className={`system-select-button ${
+          className={`btn system-select-button ${
             props.currentSystemId === s.system_id ? "selected-system" : ""
           }`}
           onClick={() => {

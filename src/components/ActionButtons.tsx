@@ -77,15 +77,16 @@ export function ActionButtons({ currentSystem, refreshSystems }: Props) {
     <div className="action-buttons">
       <button
         onClick={advance}
+        className="btn"
         disabled={!!currentSystem?.advance || currentSystem?.is_within_period}
       >
         Advance (1hr)
       </button>
-      <button onClick={boost} disabled={!!currentSystem?.boost}>
+      <button onClick={boost} disabled={!!currentSystem?.boost} className="btn">
         Boost (10m)
       </button>
       {(!!currentSystem?.advance || !!currentSystem?.boost) && (
-        <button onClick={cancel} type="reset">
+        <button onClick={cancel} type="reset" className="btn">
           Cancel
         </button>
       )}

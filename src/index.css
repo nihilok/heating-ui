@@ -33,8 +33,7 @@ h1 {
   line-height: 1.1;
 }
 
-input[type=submit],
-button {
+.btn {
   border-radius: 8px;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
@@ -47,15 +46,12 @@ button {
   min-width: 14ch;
 }
 
-input[type=submit]:hover,
-button:hover {
+.btn:hover {
   border-color: #646cff;
 }
 
-input[type=submit]:focus,
-input[type=submit]:focus-visible,
-button:focus,
-button:focus-visible {
+.btn:focus,
+.btn:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
@@ -69,8 +65,7 @@ button:focus-visible {
     color: #747bff;
   }
 
-  input[type=submit],
-  button {
+  .btn {
     background-color: #f9f9f9;
     color: #213547;
   }

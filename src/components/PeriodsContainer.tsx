@@ -165,7 +165,7 @@ export const PeriodsContainer: React.FC<PeriodsContainerProps> = ({
   return (
     <div className="periods-container">
       <div className="new-period-button">
-        <button onClick={newPeriod} disabled={!hasChanged}>
+        <button onClick={newPeriod} disabled={!hasChanged} className="btn">
           + Add Period
         </button>
       </div>

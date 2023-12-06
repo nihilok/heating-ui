@@ -108,7 +108,7 @@ function App() {
                   <>
                     <button
                       onClick={() => setShowProgram(false)}
-                      className="mt-4"
+                      className="btn mt-4"
                     >
                       Hide Program
                     </button>
@@ -118,7 +118,10 @@ function App() {
                     />
                   </>
                 ) : (
-                  <button onClick={() => setShowProgram(true)} className="my-4">
+                  <button
+                    onClick={() => setShowProgram(true)}
+                    className="btn my-4"
+                  >
                     Show Program
                   </button>
                 )}
