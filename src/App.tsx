@@ -6,11 +6,12 @@ import { SystemSelect } from "./components/SystemSelect.tsx";
 import { Display } from "./components/Display.tsx";
 import { useBrowserStorage } from "./hooks/useBrowserStorage.ts";
 import { usePrevious } from "./hooks/usePrevious.ts";
-import { ToastContainer, toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import flame from "./assets/flame.png";
 import { LoadingSpinner } from "./components/LoadingSpinner.tsx";
 import { ActionButtons } from "./components/ActionButtons.tsx";
+import { PauseButton } from "./components/PauseButton.tsx";
 
 function App() {
   const { get: loadSystem, set: saveSystem } =
@@ -44,10 +45,13 @@ function App() {
     [apiUrl]
   );
 
+  const [refreshSystemKey, setRefreshSystemKey] = useState(false);
+
   const refreshSystems = React.useCallback(() => {
     getSystems().then((data) => {
       if (!data) return;
       setSystems(data.sort((a, b) => (a.system_id > b.system_id ? 1 : -1)));
+      setRefreshSystemKey((prev) => !prev);
     });
   }, [getSystems]);
 
@@ -73,7 +77,7 @@ function App() {
 
   const currentSystem = useMemo(
     () => systems.find((s) => s.system_id === currentSystemId),
-    [systems, currentSystemId]
+    [systems, currentSystemId, refreshSystemKey]
   );
 
   return (
@@ -94,37 +98,44 @@ function App() {
               currentSystemId={currentSystemId}
               setCurrentSystemId={setCurrentSystemId}
             />
-            {currentSystemId && (
+            {currentSystem && (
               <>
                 <Display
                   key={currentSystemId}
                   currentSystemId={currentSystemId}
+                  currentSystem={currentSystem}
                 />
                 <ActionButtons
                   currentSystem={currentSystem}
                   refreshSystems={refreshSystems}
                 />
-                {showProgram ? (
-                  <>
+                <>
+                  <div
+                    className={
+                      showProgram ? "flex gap-3 mt-3" : "flex gap-3 mt-3 mb-4"
+                    }
+                  >
                     <button
-                      onClick={() => setShowProgram(false)}
-                      className="btn mt-4"
+                      onClick={() => setShowProgram(!showProgram)}
+                      className={`btn`}
                     >
-                      Hide Program
+                      {showProgram ? "Hide Times" : "Show Times"}
                     </button>
+                    {currentSystem && (
+                      <PauseButton
+                        currentSystem={currentSystem}
+                        refreshSystems={refreshSystems}
+                      />
+                    )}
+                  </div>
+                  {showProgram && (
                     <PeriodsContainer
                       systems={systems}
                       currentSystemId={currentSystemId}
+                      refreshSystems={refreshSystems}
                     />
-                  </>
-                ) : (
-                  <button
-                    onClick={() => setShowProgram(true)}
-                    className="btn my-4"
-                  >
-                    Show Program
-                  </button>
-                )}
+                  )}
+                </>
               </>
             )}
           </>

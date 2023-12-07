@@ -14,7 +14,10 @@ const TOTAL = MAX_TEMP - MIN_TEMP;
 const SMALL_AREA = Math.floor(TOTAL / 10);
 const MEDIUM_AREA = Math.floor(TOTAL / 3);
 
-export function Display(props: { currentSystemId: string | null }) {
+export function Display(props: {
+  currentSystemId: string | null;
+  currentSystem: System;
+}) {
   const { get: loadTemp, set: saveTemp } = useBrowserStorage(
     `temperature:${props.currentSystemId}`
   );
@@ -145,6 +148,7 @@ export function Display(props: { currentSystemId: string | null }) {
           : target
           ? "BOOST"
           : ""}
+        {!props.currentSystem.program && " (Paused)"}
       </p>
       <LoadingSpinner show={isLoading} sm={true} pos={"top-right"} />
     </>
