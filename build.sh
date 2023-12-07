@@ -2,7 +2,7 @@ set -e
 
 DEST="../../Python/central-heating-api/application/front-end/"
 
-AUTH_URL=$(grep "const AUTH_URL" "$(pwd)/src/context/AuthContext.tsx" | awk -F'"' '{print $2}')
+AUTH_URL=$(grep "const AUTH_URL" "$(pwd)/src/context/AuthContext.tsx"  | grep -v '^//' | awk -F'"' '{print $2}')
 
 if [[ "$AUTH_URL" == "http://localhost:8080" ]]; then
   echo "AUTH_URL is set to localhost."
