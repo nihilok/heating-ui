@@ -1,8 +1,8 @@
 import * as React from "react";
 import { useBrowserStorage } from "../hooks/useBrowserStorage.ts";
 
-const AUTH_URL = "http://localhost:8080";
-// const AUTH_URL = window.location.origin;
+// const AUTH_URL = "http://localhost:8080";
+const AUTH_URL = window.location.origin;
 const API_URL = `${AUTH_URL}/api/v3`;
 
 type Token = string | null;
