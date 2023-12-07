@@ -2,14 +2,16 @@ set -e
 
 DEST="../../Python/central-heating-api/application/front-end/"
 
-AUTH_URL=$(grep "const AUTH_URL" "$(pwd)/src/context/AuthContext.tsx"  | grep -v '^//' | awk -F'"' '{print $2}')
+# We first grep 'const AUTH_URL' then invert grep for lines starting with '//'
+AUTH_URL=$(grep "const AUTH_URL" ./src/context/AuthContext.tsx | grep -v '^//')
+
+# Cut the string to only get the URL
+AUTH_URL=$(echo $AUTH_URL | awk -F'"' '{print $2}')
+
 
 if [[ "$AUTH_URL" == "http://localhost:8080" ]]; then
   echo "AUTH_URL is set to localhost."
   exit 1
-else
-  echo "AUTH_URL is not set to localhost."
-  exit 0
 fi
 
 npm run build
