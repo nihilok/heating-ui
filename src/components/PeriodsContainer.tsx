@@ -3,11 +3,11 @@ import React, { useCallback, useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { useAuthContext } from "../context/AuthContext.tsx";
 import { usePrevious } from "../hooks/usePrevious.ts";
-import { toast } from "react-toastify";
 import {
   arePeriodArrsEqual,
   arePeriodsEqual,
   DEFAULT_DAYS,
+  flashMessage,
   sortPeriods,
 } from "../utils.ts";
 
@@ -40,23 +40,11 @@ export const PeriodsContainer: React.FC<PeriodsContainerProps> = ({
     }).then((response) => {
       if (response.status === 401) {
         logout();
+        flashMessage("You have been logged out", "error");
       }
       setIsLoading(false);
       refreshSystems();
-      toast("Program updated", {
-        type: "success",
-        autoClose: 1250,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme:
-          window.matchMedia &&
-          window.matchMedia("(prefers-color-scheme: dark)").matches
-            ? "dark"
-            : "light",
-      });
+      flashMessage("Program updated", "success");
     });
   }, [apiUrl, currentSystemId, logout, periods, refreshSystems, token]);
 

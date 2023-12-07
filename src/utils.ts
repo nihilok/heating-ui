@@ -1,3 +1,5 @@
+import { toast } from "react-toastify";
+
 export const DEFAULT_DAYS = {
   monday: true,
   tuesday: true,
@@ -51,4 +53,21 @@ export function arePeriodArrsEqual(
   }
 
   return true;
+}
+
+export function flashMessage(message: string, type: "success" | "error") {
+  toast(message, {
+    type: type,
+    autoClose: 1250,
+    hideProgressBar: true,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme:
+      window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "dark"
+        : "light",
+  });
 }

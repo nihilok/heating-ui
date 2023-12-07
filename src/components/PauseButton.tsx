@@ -1,4 +1,5 @@
 import { useAuthContext } from "../context/AuthContext.tsx";
+import { flashMessage } from "../utils.ts";
 
 export function PauseButton({
   currentSystem,
@@ -27,6 +28,10 @@ export function PauseButton({
         logout();
         return;
       }
+      flashMessage(
+        `Program ${currentSystem.program ? "paused" : "resumed"}`,
+        "success"
+      );
       refreshSystems();
     });
   };
