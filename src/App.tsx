@@ -20,58 +20,69 @@ function App() {
   const { token, apiUrl } = useAuthContext();
   const [systems, setSystems] = React.useState<System[]>([]);
   const [currentSystemId, setCurrentSystemId] = useState<string | null>(
-    loadSystem() ?? null
+    loadSystem() ?? null,
   );
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
   const [showProgram, setShowProgram] = React.useState<boolean>(false);
 
-
-  function flashError(err: any) {
-    toast(err.detail ?? err.error ?? err.message ?? "Something went wrong!", {
+  function flashError(err: any, detail?: string) {
+    let message =
+      err.detail ?? err.error ?? err.message ?? "Something went wrong!";
+    if (detail) {
+      message += ` ${detail}`;
+    }
+    toast(message, {
       type: "error",
-    })
+      theme:
+        window.matchMedia &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "light",
+    });
   }
 
   const getSystems = React.useCallback(
     async function get(): Promise<System[] | void> {
-      try {
-        const r = await fetch(`${apiUrl}/systems/`);
-        if (r.status === 200) {
-          return r.json();
+      const r = await fetch(`${apiUrl}/systems/`);
+      const contentType = r.headers.get("content-type");
+      if (contentType && contentType.indexOf("application/json") !== -1) {
+        if (r.status !== 200) {
+          r.json()
+            .then((err) => flashError(err, String(r.status)))
+            .catch(() => flashError({}, String(r.status)));
         } else {
-          r.json().then((err) =>
-            flashError(err)
-          );
+          return r.json();
         }
-      } catch (err) {
-        flashError(err)
       }
+      throw new Error(
+        `Could not retrieve systems. JSON response expected (received ${contentType})`,
+      );
     },
-    [apiUrl]
+    [apiUrl],
   );
 
   const [refreshSystemKey, setRefreshSystemKey] = useState(false);
-
 
   const refreshSystems = React.useCallback(() => {
     getSystems().then((data) => {
       if (!data) return;
       setSystems(data.sort((a, b) => (a.system_id > b.system_id ? 1 : -1)));
       setRefreshSystemKey((prev) => !prev);
-    }).catch(err => {
-      setSystems([])
-      flashError(err);
     });
   }, [getSystems]);
 
   useEffect(() => {
     let isActiveRequest = true;
-    getSystems().then((data) => {
-      if (!isActiveRequest) return;
-      if (!data) return;
-      setSystems(data.sort((a, b) => (a.system_id > b.system_id ? 1 : -1)));
-      setIsLoading(false);
-    }).catch(err => flashError(err));
+    getSystems()
+      .then((data) => {
+        if (!isActiveRequest) return;
+        if (!data) return;
+        setSystems(data.sort((a, b) => (a.system_id > b.system_id ? 1 : -1)));
+      })
+      .catch((err) => {
+        flashError(err);
+      })
+      .finally(() => setIsLoading(false));
 
     return () => {
       isActiveRequest = false;
@@ -86,7 +97,7 @@ function App() {
 
   const currentSystem = useMemo(
     () => systems.find((s) => s.system_id === currentSystemId),
-    [systems, currentSystemId, refreshSystemKey]
+    [systems, currentSystemId, refreshSystemKey],
   );
 
   return (
