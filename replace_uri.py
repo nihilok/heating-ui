@@ -2,7 +2,7 @@ from pathlib import Path
 
 from bs4 import BeautifulSoup
 
-root = Path("/Users/michael/Personal/Python/central-heating-api/application/front-end")
+root = Path("/Users/michael/Code/Python/central-heating-api/application/front-end")
 
 # Open the HTML file and read its content
 with open(root / "index.html", "r") as html_file:

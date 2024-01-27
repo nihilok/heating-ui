@@ -25,6 +25,13 @@ function App() {
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
   const [showProgram, setShowProgram] = React.useState<boolean>(false);
 
+
+  function flashError(err: any) {
+    toast(err.detail ?? err.error ?? err.message ?? "Something went wrong!", {
+      type: "error",
+    })
+  }
+
   const getSystems = React.useCallback(
     async function get(): Promise<System[] | void> {
       try {
@@ -33,13 +40,11 @@ function App() {
           return r.json();
         } else {
           r.json().then((err) =>
-            toast(err.detail ?? err.error ?? err.message, {
-              type: "error",
-            })
+            flashError(err)
           );
         }
       } catch (err) {
-        toast(err as string, { type: "error" });
+        flashError(err)
       }
     },
     [apiUrl]
@@ -47,11 +52,15 @@ function App() {
 
   const [refreshSystemKey, setRefreshSystemKey] = useState(false);
 
+
   const refreshSystems = React.useCallback(() => {
     getSystems().then((data) => {
       if (!data) return;
       setSystems(data.sort((a, b) => (a.system_id > b.system_id ? 1 : -1)));
       setRefreshSystemKey((prev) => !prev);
+    }).catch(err => {
+      setSystems([])
+      flashError(err);
     });
   }, [getSystems]);
 
@@ -62,7 +71,7 @@ function App() {
       if (!data) return;
       setSystems(data.sort((a, b) => (a.system_id > b.system_id ? 1 : -1)));
       setIsLoading(false);
-    });
+    }).catch(err => flashError(err));
 
     return () => {
       isActiveRequest = false;
