@@ -19,19 +19,19 @@ export function Display(props: {
   currentSystem: System;
 }) {
   const { get: loadTemp, set: saveTemp } = useBrowserStorage(
-    `temperature:${props.currentSystemId}`
+    `temperature:${props.currentSystemId}`,
   );
   const { get: loadTarget, set: saveTarget } = useBrowserStorage(
-    `target:${props.currentSystemId}`
+    `target:${props.currentSystemId}`,
   );
   const { get: loadRelay, set: saveRelay } = useBrowserStorage(
-    `relay:${props.currentSystemId}`
+    `relay:${props.currentSystemId}`,
   );
 
   const { apiUrl } = useAuthContext();
-  const [temperature, setTemperature] = React.useState<number | undefined>(
-    loadTemp()
-  );
+  const [temperature, setTemperature] = React.useState<
+    number | string | null | undefined
+  >(loadTemp());
   const [target, setTarget] = React.useState<number | undefined>(loadTarget());
   const [relayOn, setRelayOn] = React.useState<boolean>(loadRelay() ?? false);
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
@@ -39,12 +39,12 @@ export function Display(props: {
   const getTemp = React.useCallback(
     async function (): Promise<{ temperature?: number }> {
       const res = await fetch(
-        `${apiUrl}/temperature/${props.currentSystemId}/`
+        `${apiUrl}/temperature/${props.currentSystemId}/`,
       );
       if (res.status === 200) return res.json();
       return {};
     },
-    [apiUrl, props.currentSystemId]
+    [apiUrl, props.currentSystemId],
   );
 
   const getTarget = React.useCallback(
@@ -56,7 +56,7 @@ export function Display(props: {
       if (res.status === 200) return res.json();
       return {};
     },
-    [apiUrl, props.currentSystemId]
+    [apiUrl, props.currentSystemId],
   );
 
   useEffect(() => {
@@ -137,7 +137,11 @@ export function Display(props: {
               hideMinMax: true,
             },
           }}
-          value={temperature || (MAX_TEMP - MIN_TEMP) / 2}
+          value={
+            parseInt(temperature as string)
+              ? (temperature as number)
+              : (MAX_TEMP - MIN_TEMP) / 2
+          }
           minValue={MIN_TEMP}
           maxValue={MAX_TEMP}
         />
@@ -146,8 +150,8 @@ export function Display(props: {
         {target && target <= MAX_TEMP
           ? `Target: ${target}˚C`
           : target
-          ? "BOOST"
-          : ""}
+            ? "BOOST"
+            : ""}
         {!props.currentSystem.program && " (Paused)"}
       </p>
       <LoadingSpinner show={isLoading} sm={true} pos={"top-right"} />
