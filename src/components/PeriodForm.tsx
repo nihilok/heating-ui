@@ -100,14 +100,26 @@ export function PeriodForm(props: Props) {
     setShouldUpdate(true);
   }
 
+  function onRemovePeriod() {
+    if (window.confirm("Delete this period? This cannot be undone.")) {
+      props.onRemove();
+    }
+  }
+
   return (
     <form
       onSubmit={handleSubmit}
       ref={formRef}
       className="flash-in my-4 period-form"
     >
-      <button className="close-icon" onClick={props.onRemove} type="button">
-        X
+      <button
+        className="close-icon"
+        onClick={onRemovePeriod}
+        type="button"
+        title="Delete period"
+        aria-label="Delete period"
+      >
+        ×
       </button>
       <div className="flex gap-3 justify-center items-center my-3">
         <label className="form-label">
