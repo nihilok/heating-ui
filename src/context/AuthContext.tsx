@@ -1,5 +1,6 @@
 import * as React from "react";
 import { useBrowserStorage } from "../hooks/useBrowserStorage.ts";
+import { flashMessage } from "../utils.ts";
 
 // const AUTH_URL = "http://localhost:8080";
 const AUTH_URL = window.location.origin;
@@ -38,8 +39,8 @@ export function AuthContextProvider({
     setToken(token);
   };
 
-  const handleFailure = (responseJSON: { detail: string }) => {
-    console.log(responseJSON.detail);
+  const handleFailure = (responseJSON: { detail?: string }) => {
+    flashMessage(responseJSON.detail || "Login failed", "error");
   };
 
   const handleResponse = (response: Response) => {

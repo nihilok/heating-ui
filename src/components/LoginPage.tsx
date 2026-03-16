@@ -8,27 +8,36 @@ import "./login-form.css";
 const ENABLE_REGISTRATIONS = false;
 
 function PasswordInput(props: {
-  onChange: () => void;
+  onChange: React.ChangeEventHandler<HTMLInputElement>;
   hasError: boolean;
-  placeholder?: string;
+  label: string;
   name: string;
+  id: string;
 }) {
   const [showPassword, setShowPassword] = React.useState<boolean>(false);
 
   return (
     <div className="form-control">
+      <label htmlFor={props.id} className="input-label">
+        {props.label}
+      </label>
       <input
+        id={props.id}
         type={showPassword ? "text" : "password"}
         onChange={props.onChange}
         className={props.hasError ? "error" : undefined}
-        placeholder={props.placeholder}
         name={props.name}
+        aria-invalid={props.hasError}
         required
       />
-      <FontAwesomeIcon
-        icon={showPassword ? faEyeSlash : faEye}
+      <button
+        type="button"
+        className="password-toggle"
+        aria-label={showPassword ? "Hide password" : "Show password"}
         onClick={() => setShowPassword(!showPassword)}
-      />
+      >
+        <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+      </button>
     </div>
   );
 }
@@ -41,7 +50,8 @@ export function LoginPage() {
   );
   const [passwordMismatch, setPasswordMismatch] =
     React.useState<boolean>(false);
-  const resetPasswordMismatch = () => setPasswordMismatch(false);
+  const resetPasswordMismatch: React.ChangeEventHandler<HTMLInputElement> = () =>
+    setPasswordMismatch(false);
 
   const { register, login, token } = useAuthContext();
   const onSetSignUp = (signup: boolean) => {
@@ -76,34 +86,40 @@ export function LoginPage() {
       <h3>{isSignUp ? "Create an account" : "Log In"}</h3>
       <form
         onSubmit={onSubmit}
-        data-form-error={"Passwords do not match"}
-        className={
-          passwordMismatch && isSignUp ? "login-form form-error" : "login-form"
-        }
+        className="login-form"
       >
         <div className="form-control">
-          <input name="username" type="text" placeholder="Username" required />
+          <label htmlFor="username" className="input-label">
+            Username
+          </label>
+          <input id="username" name="username" type="text" required />
         </div>
         <PasswordInput
           onChange={resetPasswordMismatch}
           hasError={passwordMismatch && isSignUp}
-          placeholder="Password"
+          label="Password"
           name="password"
+          id="password"
         />
         {isSignUp && (
           <PasswordInput
             onChange={resetPasswordMismatch}
             hasError={passwordMismatch}
-            placeholder="Confirm Password"
+            label="Confirm password"
             name="confirm"
+            id="confirm-password"
           />
+        )}
+        {passwordMismatch && isSignUp && (
+          <p role="alert" className="error my-2">
+            Passwords do not match
+          </p>
         )}
         <input
           type="submit"
           value={isSignUp ? "Submit" : "Login"}
           className="btn"
         />
-        {/*{passwordMismatch && <p className="error">Passwords do not match</p>}*/}
       </form>
       {ENABLE_REGISTRATIONS && (
         <div className="my2">
