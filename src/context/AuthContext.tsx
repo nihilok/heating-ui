@@ -9,7 +9,7 @@ const API_URL = `${AUTH_URL}/api/v3`;
 type Token = string | null;
 type LoginFn<T> = (username: string, password: string) => Promise<T>;
 
-interface AuthContext {
+export interface AuthContext {
   token: Token;
   login: LoginFn<void>;
   register: LoginFn<Response>;
@@ -17,7 +17,7 @@ interface AuthContext {
   apiUrl: typeof API_URL;
 }
 
-const AuthContext = React.createContext({} as AuthContext);
+export const AuthContext = React.createContext({} as AuthContext);
 
 export function AuthContextProvider({
   children,
@@ -83,8 +83,4 @@ export function AuthContextProvider({
       {children}
     </AuthContext.Provider>
   );
-}
-
-export function useAuthContext() {
-  return React.useContext(AuthContext);
 }

@@ -1,9 +1,9 @@
 import GaugeComponent from "react-gauge-component";
-import { useAuthContext } from "../context/AuthContext.tsx";
+import { useAuthContext } from "../context/useAuthContext.ts";
 import React, { useEffect } from "react";
-import "./display.css";
 import { useBrowserStorage } from "../hooks/useBrowserStorage.ts";
 import { LoadingSpinner } from "./LoadingSpinner.tsx";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card.tsx";
 
 const MIN_TEMP = 16;
 
@@ -13,6 +13,7 @@ const TOTAL = MAX_TEMP - MIN_TEMP;
 
 const SMALL_AREA = Math.floor(TOTAL / 10);
 const MEDIUM_AREA = Math.floor(TOTAL / 3);
+const REQUEST_TIMEOUT_MS = 5000;
 
 export function Display(props: {
   currentSystemId: string | null;
@@ -36,15 +37,29 @@ export function Display(props: {
   const [relayOn, setRelayOn] = React.useState<boolean>(loadRelay() ?? false);
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
 
+  const fetchWithTimeout = React.useCallback(async (url: string) => {
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+    try {
+      return await fetch(url, { signal: controller.signal });
+    } finally {
+      window.clearTimeout(timeoutId);
+    }
+  }, []);
+
   const getTemp = React.useCallback(
     async function (): Promise<{ temperature?: number }> {
-      const res = await fetch(
-        `${apiUrl}/temperature/${props.currentSystemId}/`,
-      );
-      if (res.status === 200) return res.json();
+      try {
+        const res = await fetchWithTimeout(
+          `${apiUrl}/temperature/${props.currentSystemId}/`,
+        );
+        if (res.status === 200) return res.json();
+      } catch {
+        return {};
+      }
       return {};
     },
-    [apiUrl, props.currentSystemId],
+    [apiUrl, fetchWithTimeout, props.currentSystemId],
   );
 
   const getTarget = React.useCallback(
@@ -52,50 +67,53 @@ export function Display(props: {
       current_target?: number;
       relay_on?: boolean;
     }> {
-      const res = await fetch(`${apiUrl}/target/${props.currentSystemId}/`);
-      if (res.status === 200) return res.json();
+      try {
+        const res = await fetchWithTimeout(`${apiUrl}/target/${props.currentSystemId}/`);
+        if (res.status === 200) return res.json();
+      } catch {
+        return {};
+      }
       return {};
     },
-    [apiUrl, props.currentSystemId],
+    [apiUrl, fetchWithTimeout, props.currentSystemId],
   );
 
   useEffect(() => {
     let isActive = true;
-    function temperatureFunc() {
-      getTemp().then((data) => {
-        if (isActive) {
-          saveTemp(data.temperature);
-          setTemperature(data.temperature);
-        }
-      });
-      getTarget()
-        .then((data) => {
-          if (isActive) {
-            saveTarget(data.current_target);
-            saveRelay(data.relay_on);
-            setTarget(data.current_target);
-            setRelayOn(data.relay_on ?? false);
-          }
-        })
-        .finally(() => {
-          if (isActive) setIsLoading(false);
-        });
+
+    async function temperatureFunc() {
+      const [tempData, targetData] = await Promise.all([getTemp(), getTarget()]);
+      if (!isActive) {
+        return;
+      }
+      saveTemp(tempData.temperature);
+      setTemperature(tempData.temperature);
+      saveTarget(targetData.current_target);
+      saveRelay(targetData.relay_on);
+      setTarget(targetData.current_target);
+      setRelayOn(targetData.relay_on ?? false);
+      setIsLoading(false);
     }
-    temperatureFunc();
+
+    void temperatureFunc();
     const interval = setInterval(temperatureFunc, 3000);
     return () => {
       isActive = false;
       clearInterval(interval);
     };
-  }, [isLoading, getTarget, getTemp, saveTemp, saveTarget, saveRelay]);
+  }, [getTarget, getTemp, saveTemp, saveTarget, saveRelay]);
 
   useEffect(() => {
     setIsLoading(true);
   }, [props.currentSystemId]);
 
   return (
-    <>
-      <div className="fixed-width">
+    <Card className="relative overflow-hidden">
+      <CardHeader>
+        <CardTitle>Current Temperature</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="mx-auto w-full max-w-sm">
         <GaugeComponent
           type="semicircle"
           arc={{
@@ -145,16 +163,17 @@ export function Display(props: {
           minValue={MIN_TEMP}
           maxValue={MAX_TEMP}
         />
-      </div>
-      <p className="mb-4">
-        {target && target <= MAX_TEMP
-          ? `Target: ${target}˚C`
-          : target
-            ? "BOOST"
-            : ""}
-        {!props.currentSystem.program && " (Paused)"}
-      </p>
+        </div>
+        <p className="mt-2 text-center text-lg font-medium">
+          {target && target <= MAX_TEMP
+            ? `Target: ${target}˚C`
+            : target
+              ? "BOOST"
+              : ""}
+          {!props.currentSystem.program && " (Paused)"}
+        </p>
+      </CardContent>
       <LoadingSpinner show={isLoading} sm={true} pos={"top-right"} />
-    </>
+    </Card>
   );
 }

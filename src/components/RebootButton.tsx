@@ -1,5 +1,6 @@
 import { flashMessage } from "../utils.ts";
-import { useAuthContext } from "../context/AuthContext.tsx";
+import { useAuthContext } from "../context/useAuthContext.ts";
+import { Button } from "./ui/button.tsx";
 
 export function RebootButton() {
   const { apiUrl, token, logout } = useAuthContext();
@@ -21,8 +22,8 @@ export function RebootButton() {
   }
 
   return (
-    <button onClick={reboot} className="btn">
+    <Button onClick={reboot} variant="outline">
       Reboot
-    </button>
+    </Button>
   );
 }

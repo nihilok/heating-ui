@@ -1,7 +1,7 @@
 import { PeriodForm } from "./PeriodForm.tsx";
 import React, { useCallback, useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { useAuthContext } from "../context/AuthContext.tsx";
+import { useAuthContext } from "../context/useAuthContext.ts";
 import { usePrevious } from "../hooks/usePrevious.ts";
 import {
   arePeriodArrsEqual,
@@ -10,6 +10,8 @@ import {
   flashMessage,
   sortPeriods,
 } from "../utils.ts";
+import { Button } from "./ui/button.tsx";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card.tsx";
 
 interface PeriodsContainerProps {
   systems: System[];
@@ -57,7 +59,7 @@ export const PeriodsContainer: React.FC<PeriodsContainerProps> = ({
 
       refreshSystems();
       flashMessage("Program updated", "success");
-    } catch (_err) {
+    } catch {
       flashMessage("Could not reach the server", "error");
     } finally {
       setIsLoading(false);
@@ -125,36 +127,42 @@ export const PeriodsContainer: React.FC<PeriodsContainerProps> = ({
   }
 
   return (
-    <div id="periods-container" className="periods-container">
-      <div className="new-period-button">
-        <button
-          onClick={newPeriod}
-          disabled={!hasChanged}
-          className="btn"
-          title={
-            hasChanged ? "Add a new period" : "Wait for current changes to save"
-          }
-        >
-          + Add Period
-        </button>
-      </div>
+    <Card id="periods-container">
+      <CardHeader className="pb-4">
+        <CardTitle>Heating Periods</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="mb-4 flex justify-end">
+          <Button
+            onClick={newPeriod}
+            disabled={!hasChanged}
+            title={
+              hasChanged ? "Add a new period" : "Wait for current changes to save"
+            }
+          >
+            + Add Period
+          </Button>
+        </div>
       {periods.length === 0 && (
-        <p className="text-center my-3">
+        <p className="my-3 text-center text-sm text-slate-500">
           No periods configured yet. Add one to start scheduling heating.
         </p>
       )}
-      {periods.map((p, i) => (
-        <div key={p.id}>
-          <PeriodForm
-            {...p}
-            onSubmit={(period: Period) => {
-              updatePeriod(p.id as string, period);
-            }}
-            onRemove={() => onRemovePeriod(p.id)}
-          />
-          {i < periods.length - 1 && <hr />}
-        </div>
-      ))}
-    </div>
+      <div className="space-y-4">
+        {periods.map((p, i) => (
+          <div key={p.id}>
+            <PeriodForm
+              {...p}
+              onSubmit={(period: Period) => {
+                updatePeriod(p.id as string, period);
+              }}
+              onRemove={() => onRemovePeriod(p.id)}
+            />
+            {i < periods.length - 1 && <hr className="mt-4 border-slate-200" />}
+          </div>
+        ))}
+      </div>
+      </CardContent>
+    </Card>
   );
 };
