@@ -18,16 +18,24 @@ export function PauseButton({
       Authorization: `Bearer ${token}`,
     });
     fetch(
-      `${apiUrl}/program/${currentSystem.system_id}/${programRunning ? "off" : "on"}`,
+      `${apiUrl}/program/${currentSystem.system_id}/${programRunning ? "off" : "on"}/`,
       { method: "POST", headers },
-    ).then((response) => {
-      if (response.status === 401) {
-        logout();
-        return;
-      }
-      flashMessage(`Program ${programRunning ? "paused" : "resumed"}`, "success");
-      refreshSystems();
-    });
+    )
+      .then((response) => {
+        if (response.status === 401) {
+          logout();
+          return;
+        }
+        if (!response.ok) {
+          flashMessage(`Could not ${programRunning ? "pause" : "resume"} program`, "error");
+          return;
+        }
+        flashMessage(`Program ${programRunning ? "paused" : "resumed"}`, "success");
+        refreshSystems();
+      })
+      .catch(() => {
+        flashMessage("Could not reach the server", "error");
+      });
   };
 
   return (
