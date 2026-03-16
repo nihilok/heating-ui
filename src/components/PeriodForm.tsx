@@ -100,6 +100,8 @@ export function PeriodForm(props: Props) {
     setShouldUpdate(true);
   }
 
+  const inputIdPrefix = `period-${props.id}`;
+
   function onRemovePeriod() {
     if (window.confirm("Delete this period? This cannot be undone.")) {
       props.onRemove();
@@ -122,9 +124,10 @@ export function PeriodForm(props: Props) {
         ×
       </button>
       <div className="flex gap-3 justify-center items-center my-3">
-        <label className="form-label">
+        <label className="form-label" htmlFor={`${inputIdPrefix}-start-time`}>
           <div>From: </div>
           <input
+            id={`${inputIdPrefix}-start-time`}
             className="form-input"
             name="start-time"
             placeholder="Start time"
@@ -135,9 +138,10 @@ export function PeriodForm(props: Props) {
             required={true}
           />
         </label>
-        <label className="form-label">
+        <label className="form-label" htmlFor={`${inputIdPrefix}-end-time`}>
           <div>To: </div>
           <input
+            id={`${inputIdPrefix}-end-time`}
             className="form-input"
             name="end-time"
             placeholder="Start time"
@@ -149,12 +153,15 @@ export function PeriodForm(props: Props) {
           />
         </label>
       </div>
-      <div className="flex gap-1 justify-center items-center">
+      <fieldset className="flex gap-1 justify-center items-center day-selector">
+        <legend className="sr-only">Days enabled for this period</legend>
         <label
+          htmlFor={`${inputIdPrefix}-monday`}
           className={`dotw-label ${monday ? "is-checked" : ""}`}
           data-display-text="Monday"
         >
           <input
+            id={`${inputIdPrefix}-monday`}
             type="checkbox"
             className="dotw-checkbox"
             name="monday"
@@ -166,10 +173,12 @@ export function PeriodForm(props: Props) {
           />
         </label>
         <label
+          htmlFor={`${inputIdPrefix}-tuesday`}
           className={`dotw-label ${tuesday ? "is-checked" : ""}`}
           data-display-text="Tuesday"
         >
           <input
+            id={`${inputIdPrefix}-tuesday`}
             type="checkbox"
             className="dotw-checkbox"
             name="tuesday"
@@ -181,10 +190,12 @@ export function PeriodForm(props: Props) {
           />
         </label>
         <label
+          htmlFor={`${inputIdPrefix}-wednesday`}
           className={`dotw-label ${wednesday ? "is-checked" : ""}`}
           data-display-text="Wednesday"
         >
           <input
+            id={`${inputIdPrefix}-wednesday`}
             type="checkbox"
             className="dotw-checkbox"
             name="wednesday"
@@ -196,10 +207,12 @@ export function PeriodForm(props: Props) {
           />
         </label>
         <label
+          htmlFor={`${inputIdPrefix}-thursday`}
           className={`dotw-label ${thursday ? "is-checked" : ""}`}
           data-display-text="Thursday"
         >
           <input
+            id={`${inputIdPrefix}-thursday`}
             type="checkbox"
             className="dotw-checkbox"
             name="thursday"
@@ -211,10 +224,12 @@ export function PeriodForm(props: Props) {
           />
         </label>
         <label
+          htmlFor={`${inputIdPrefix}-friday`}
           className={`dotw-label ${friday ? "is-checked" : ""}`}
           data-display-text="Friday"
         >
           <input
+            id={`${inputIdPrefix}-friday`}
             type="checkbox"
             className="dotw-checkbox"
             name="friday"
@@ -226,10 +241,12 @@ export function PeriodForm(props: Props) {
           />
         </label>
         <label
+          htmlFor={`${inputIdPrefix}-saturday`}
           className={`dotw-label ${saturday ? "is-checked" : ""}`}
           data-display-text="Saturday"
         >
           <input
+            id={`${inputIdPrefix}-saturday`}
             type="checkbox"
             className="dotw-checkbox"
             name="saturday"
@@ -241,10 +258,12 @@ export function PeriodForm(props: Props) {
           />
         </label>
         <label
+          htmlFor={`${inputIdPrefix}-sunday`}
           className={`dotw-label ${sunday ? "is-checked" : ""}`}
           data-display-text="Sunday"
         >
           <input
+            id={`${inputIdPrefix}-sunday`}
             type="checkbox"
             className="dotw-checkbox"
             name="sunday"
@@ -255,15 +274,24 @@ export function PeriodForm(props: Props) {
             }}
           />
         </label>
-      </div>
-      <label className="flex items-center justify-center gap-3 my-2">
-        Temp:{" "}
+      </fieldset>
+      <label
+        htmlFor={`${inputIdPrefix}-temperature`}
+        className="flex items-center justify-center gap-3 my-2"
+      >
+        Temp:
         <input
+          id={`${inputIdPrefix}-temperature`}
           type="range"
           min={MIN_TEMP}
           max={MAX_TEMP}
           value={tempTemperature}
           step={1}
+          aria-label="Target temperature"
+          aria-valuemin={MIN_TEMP}
+          aria-valuemax={MAX_TEMP}
+          aria-valuenow={tempTemperature}
+          aria-valuetext={`${tempTemperature}˚C`}
           onChange={(e) => setTempTemperature(parseInt(e.target.value))}
           onMouseUp={(e) => {
             onUpdateTemperature(e.currentTarget.value);

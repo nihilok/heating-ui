@@ -68,6 +68,12 @@
   color: grey;
 }
 
+.day-selector {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
 .time-range-group {
   display: flex
 }
