@@ -25,9 +25,18 @@ function App() {
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
   const [showProgram, setShowProgram] = React.useState<boolean>(false);
 
-  function flashError(err: any, detail?: string) {
-    let message =
-      err.detail ?? err.error ?? err.message ?? "Something went wrong!";
+  function getErrorMessage(err: unknown) {
+    if (!err || typeof err !== "object") return "Something went wrong!";
+    const error = err as {
+      detail?: string;
+      error?: string;
+      message?: string;
+    };
+    return error.detail ?? error.error ?? error.message ?? "Something went wrong!";
+  }
+
+  function flashError(err: unknown, detail?: string) {
+    let message = getErrorMessage(err);
     if (detail) {
       message += ` ${detail}`;
     }
@@ -61,13 +70,10 @@ function App() {
     [apiUrl],
   );
 
-  const [refreshSystemKey, setRefreshSystemKey] = useState(false);
-
   const refreshSystems = React.useCallback(() => {
     getSystems().then((data) => {
       if (!data) return;
       setSystems(data.sort((a, b) => (a.system_id > b.system_id ? 1 : -1)));
-      setRefreshSystemKey((prev) => !prev);
     });
   }, [getSystems]);
 
@@ -97,14 +103,17 @@ function App() {
 
   const currentSystem = useMemo(
     () => systems.find((s) => s.system_id === currentSystemId),
-    [systems, currentSystemId, refreshSystemKey],
+    [systems, currentSystemId],
   );
 
   return (
     <div className="app-container">
       {token ? (
         isLoading ? (
-          <LoadingSpinner show={isLoading} />
+          <div className="text-center">
+            <LoadingSpinner show={isLoading} />
+            <p className="my-2">Loading systems...</p>
+          </div>
         ) : (
           <>
             <h1 className="main-title">
@@ -118,6 +127,16 @@ function App() {
               currentSystemId={currentSystemId}
               setCurrentSystemId={setCurrentSystemId}
             />
+            {systems.length === 0 && (
+              <p className="text-center my-3">
+                No heating systems are configured yet.
+              </p>
+            )}
+            {systems.length > 0 && !currentSystem && (
+              <p className="text-center my-3">
+                Select a system to view temperatures and controls.
+              </p>
+            )}
             {currentSystem && (
               <>
                 <Display
@@ -138,8 +157,10 @@ function App() {
                     <button
                       onClick={() => setShowProgram(!showProgram)}
                       className={`btn`}
+                      aria-expanded={showProgram}
+                      aria-controls="periods-container"
                     >
-                      {showProgram ? "Hide Times" : "Show Times"}
+                      {showProgram ? "Hide Heating Times" : "Show Heating Times"}
                     </button>
                     {currentSystem && (
                       <PauseButton

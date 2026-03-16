@@ -125,12 +125,24 @@ export const PeriodsContainer: React.FC<PeriodsContainerProps> = ({
   }
 
   return (
-    <div className="periods-container">
+    <div id="periods-container" className="periods-container">
       <div className="new-period-button">
-        <button onClick={newPeriod} disabled={!hasChanged} className="btn">
+        <button
+          onClick={newPeriod}
+          disabled={!hasChanged}
+          className="btn"
+          title={
+            hasChanged ? "Add a new period" : "Wait for current changes to save"
+          }
+        >
           + Add Period
         </button>
       </div>
+      {periods.length === 0 && (
+        <p className="text-center my-3">
+          No periods configured yet. Add one to start scheduling heating.
+        </p>
+      )}
       {periods.map((p, i) => (
         <div key={p.id}>
           <PeriodForm
