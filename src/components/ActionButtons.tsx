@@ -1,4 +1,5 @@
 import { useAuthContext } from "../context/AuthContext.tsx";
+import { flashMessage } from "../utils.ts";
 
 interface Props {
   currentSystem?: System;
@@ -20,57 +21,62 @@ export function ActionButtons({ currentSystem, refreshSystems }: Props) {
     return Math.floor(date.getTime() / 1000);
   }
 
-  function advance() {
+  async function performAction(
+    endpoint: string,
+    successMessage: string,
+    body?: object
+  ) {
     if (!currentSystem) return;
     const headers = new Headers({
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     });
-    fetch(`${apiUrl}/advance/${currentSystem.system_id}/`, {
-      method: "POST",
-      headers,
-      body: JSON.stringify({ end_time: addOneHourToCurrentTime() }),
-    }).then((response) => {
+    try {
+      const response = await fetch(
+        `${apiUrl}/${endpoint}/${currentSystem.system_id}/`,
+        {
+          method: "POST",
+          headers,
+          body: body ? JSON.stringify(body) : undefined,
+        }
+      );
+
       if (response.status === 401) {
         logout();
+        flashMessage("You have been logged out", "error");
+        return;
       }
+
+      if (!response.ok) {
+        const detail = await response
+          .json()
+          .then((data: { detail?: string }) => data.detail)
+          .catch(() => undefined);
+        flashMessage(detail || `Request failed (${response.status})`, "error");
+        return;
+      }
+
       refreshSystems();
+      flashMessage(successMessage, "success");
+    } catch (_err) {
+      flashMessage("Could not reach the server", "error");
+    }
+  }
+
+  function advance() {
+    performAction("advance", "Advanced for 1 hour", {
+      end_time: addOneHourToCurrentTime(),
     });
   }
 
   function boost() {
-    if (!currentSystem) return;
-    const headers = new Headers({
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    });
-    fetch(`${apiUrl}/boost/${currentSystem.system_id}/`, {
-      method: "POST",
-      headers,
-      body: JSON.stringify({ end_time: add10MinsToCurrentTime() }),
-    }).then((response) => {
-      if (response.status === 401) {
-        logout();
-      }
-      refreshSystems();
+    performAction("boost", "Boost enabled for 10 minutes", {
+      end_time: add10MinsToCurrentTime(),
     });
   }
 
   function cancel() {
-    if (!currentSystem) return;
-    const headers = new Headers({
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    });
-    fetch(`${apiUrl}/cancel_all/${currentSystem.system_id}/`, {
-      method: "POST",
-      headers,
-    }).then((response) => {
-      if (response.status === 401) {
-        logout();
-      }
-      refreshSystems();
-    });
+    performAction("cancel_all", "Override cancelled");
   }
 
   return (

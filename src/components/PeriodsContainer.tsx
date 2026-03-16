@@ -27,25 +27,41 @@ export const PeriodsContainer: React.FC<PeriodsContainerProps> = ({
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const { apiUrl, token, logout } = useAuthContext();
 
-  const updatePeriods = useCallback(() => {
+  const updatePeriods = useCallback(async () => {
     setIsLoading(true);
     const headers = new Headers({
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     });
-    fetch(`${apiUrl}/periods/${currentSystemId}/`, {
-      method: "POST",
-      headers,
-      body: JSON.stringify({ periods }),
-    }).then((response) => {
+    try {
+      const response = await fetch(`${apiUrl}/periods/${currentSystemId}/`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify({ periods }),
+      });
+
       if (response.status === 401) {
         logout();
         flashMessage("You have been logged out", "error");
+        return;
       }
-      setIsLoading(false);
+
+      if (!response.ok) {
+        const detail = await response
+          .json()
+          .then((data: { detail?: string }) => data.detail)
+          .catch(() => undefined);
+        flashMessage(detail || `Update failed (${response.status})`, "error");
+        return;
+      }
+
       refreshSystems();
       flashMessage("Program updated", "success");
-    });
+    } catch (_err) {
+      flashMessage("Could not reach the server", "error");
+    } finally {
+      setIsLoading(false);
+    }
   }, [apiUrl, currentSystemId, logout, periods, refreshSystems, token]);
 
   function newPeriod() {
