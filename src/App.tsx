@@ -274,9 +274,9 @@ function AppShell({ page }: { page: "dashboard" | "settings" | "periods" }) {
             </CardHeader>
           </Card>
         ) : (
-          <div className="space-y-6">
+          <div className="mx-auto w-full max-w-4xl space-y-6">
             {page === "dashboard" && (
-              <>
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                 <Display currentSystemId={currentSystemId} currentSystem={currentSystem} />
                 <Card>
                   <CardHeader>
@@ -298,7 +298,7 @@ function AppShell({ page }: { page: "dashboard" | "settings" | "periods" }) {
                     </div>
                   </CardContent>
                 </Card>
-              </>
+              </div>
             )}
 
             {page === "settings" && (
