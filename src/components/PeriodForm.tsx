@@ -141,7 +141,7 @@ export function PeriodForm(props: Props) {
 
       <fieldset className="space-y-2">
         <legend className="text-sm font-medium text-slate-600">Days</legend>
-        <div className="flex flex-wrap gap-2">
+        <div className="grid grid-cols-7 gap-2">
           {dayOrder.map((day, idx) => (
             <button
               key={`${day.key}-${idx}`}
